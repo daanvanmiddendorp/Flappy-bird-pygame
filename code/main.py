@@ -2,7 +2,7 @@
 
 import pygame, sys, time
 from settings import *
-from sprites import BG, Ground
+from sprites import BG, Ground, Plane
 
 class Game:
     def __init__(self):
@@ -22,6 +22,7 @@ class Game:
         # sprites setup
         BG(self.all_sprites,self.scale_factor)
         Ground(self.all_sprites,self.scale_factor)
+        self.plane = Plane(self.all_sprites,self.scale_factor / 1.5)
     
     def run(self):
             last_time = time.time()
@@ -36,6 +37,8 @@ class Game:
                         if event.type == pygame.QUIT:
                             pygame.quit()
                             sys.exit()
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            self.plane.jump()
                     
                     # game logic
                     self.display_surface.fill((0,0,0))
