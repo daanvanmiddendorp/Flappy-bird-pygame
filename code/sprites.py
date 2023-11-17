@@ -1,7 +1,7 @@
 # hier komt de code voor de sprites
-from typing import Any
 import pygame
 from settings import *
+from random import choice, randint
 
 class BG(pygame.sprite.Sprite):
     def __init__(self, groups, scale_factor):
@@ -24,7 +24,6 @@ class BG(pygame.sprite.Sprite):
         if self.rect.centerx <= 0:
             self.pos.x = 0
         self.rect.x = round(self.pos.x)
-
 
 class Ground(pygame.sprite.Sprite):
     def __init__(self, groups, scale_factor):
@@ -90,3 +89,31 @@ class Plane(pygame.sprite.Sprite):
         self.apply_gravity(dt)
         self.animate(dt)
         self.rotate()
+
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, scale_factor, groups):
+        super().__init__(groups)
+
+        orientation = choice(["up", "down"])
+        surf = pygame.image.load(f"graphics/obstacles/pipe_{orientation}.png").convert_alpha()
+        self.image = pygame.transform.scale(surf,pygame.math.Vector2(surf.get_size()) * scale_factor)
+
+        x = WINDOW_WIDTH + randint(40, 100)
+
+
+        if orientation == "up":
+            y = WINDOW_HEIGHT + randint(10, 50)
+            self.rect = self.image.get_rect(midbottom=(WINDOW_WIDTH, WINDOW_HEIGHT / 2))
+        else:
+            y = randint(-50, -10)
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect = self.image.get_rect(midtop=(WINDOW_WIDTH, WINDOW_HEIGHT / 2))
+        
+        self.pos = pygame.math.Vector2(self.rect.topleft)
+
+    def update(self, dt):
+        self.pos.x -= 400 * dt
+        self.rect.x = round(self.pos.x)
+
+        if self.rect.right <= -100:
+            self.kill()
